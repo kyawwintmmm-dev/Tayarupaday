@@ -1,0 +1,6 @@
+{
+  "name": "မြန်မာဥပဒေရေးရာ လက်စွဲ (Myanmar Law Hub)",
+  "description": "မြန်မာနိုင်ငံ ရာဇသတ်ကြီး၊ ပြစ်မှုဆိုင်ရာ ကျင့်ထုံးဥပဒေ၊ ဖွဲ့စည်းပုံအခြေခံဥပဒေနှင့် အထူးဥပဒေများ ရှာဖွေလေ့လာနိုင်သော AI ဥပဒေရေးရာ အထောက်အကူပြုစနစ်",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
