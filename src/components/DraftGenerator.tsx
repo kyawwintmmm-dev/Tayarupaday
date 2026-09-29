@@ -78,8 +78,9 @@ export const DraftGenerator: React.FC = () => {
     // Substitute fields if placeholders exist
     selectedTemplate.fields.forEach((field) => {
       const val = fieldValues[field.key];
-      if (val) {
+      if (val !== undefined && val !== null) {
         text = text.replaceAll(`[${field.label}]`, val);
+        text = text.replaceAll(`[${field.key}]`, val);
       }
     });
     return text;
@@ -133,7 +134,8 @@ export const DraftGenerator: React.FC = () => {
 
   const handleDownload = () => {
     const element = document.createElement('a');
-    const file = new Blob([currentDraftText], { type: 'text/plain;charset=utf-8' });
+    const utf8Bom = '\uFEFF';
+    const file = new Blob([utf8Bom + currentDraftText], { type: 'text/plain;charset=utf-8' });
     element.href = URL.createObjectURL(file);
     element.download = `${selectedTemplate.id}_${Date.now()}.txt`;
     document.body.appendChild(element);

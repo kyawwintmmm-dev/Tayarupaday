@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scale, BookOpen, Bot, FileText, Bookmark, ShieldCheck, Sparkles, Search, Calculator, BookMarked, Users, Gavel, Newspaper } from 'lucide-react';
+import { Scale, BookOpen, Bot, FileText, Bookmark, ShieldCheck, Sparkles, Search, Calculator, BookMarked, Users, Gavel, Newspaper, History, Grid, Brain } from 'lucide-react';
 
 export type AppTabType =
   | 'explorer'
@@ -11,8 +11,12 @@ export type AppTabType =
   | 'calculators'
   | 'dictionary'
   | 'legal_aid'
+  | 'quizzes'
   | 'bookmarks'
-  | 'special_laws';
+  | 'notes'
+  | 'history'
+  | 'special_laws'
+  | 'more';
 
 interface HeaderProps {
   activeTab: AppTabType;
@@ -176,6 +180,18 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenS
           </button>
 
           <button
+            onClick={() => setActiveTab('quizzes')}
+            className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+              activeTab === 'quizzes'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                : 'text-amber-400 hover:bg-slate-800 hover:text-amber-300 font-semibold'
+            }`}
+          >
+            <Brain className="w-4 h-4 text-amber-400" />
+            <span>🧠 ဥပဒေ ဉာဏ်စမ်း</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('bookmarks')}
             className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
               activeTab === 'bookmarks'
@@ -184,7 +200,43 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenS
             }`}
           >
             <Bookmark className="w-4 h-4" />
-            <span>မှတ်တမ်းများ</span>
+            <span>Bookmark</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('notes')}
+            className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+              activeTab === 'notes'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <FileText className="w-4 h-4 text-amber-300" />
+            <span>ကျွန်ုပ်၏မှတ်စုများ</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+              activeTab === 'history'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <History className="w-4 h-4" />
+            <span>ဖတ်ရှုမှတ်တမ်း</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('more')}
+            className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-lg transition whitespace-nowrap border ${
+              activeTab === 'more'
+                ? 'bg-amber-500 text-slate-950 border-amber-400 font-bold shadow-sm'
+                : 'bg-slate-800/80 text-amber-400 border-amber-500/30 hover:bg-slate-800 hover:text-amber-300'
+            }`}
+          >
+            <Grid className="w-4 h-4" />
+            <span>နောက်ထပ်</span>
           </button>
         </nav>
       </div>

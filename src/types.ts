@@ -58,6 +58,10 @@ export interface LawSection {
   courtType?: string;      // စီရင်ပိုင်ခွင့်ရှိ တရားရုံး
   precedents?: Precedent[];
   tags?: string[];
+  sourceInfo?: string;     // e.g. မြန်မာနိုင်ငံ ဥပဒေစာအုပ် / ပြည်ထောင်စု ရှေ့နေချုပ်ရုံး
+  versionStatus?: 'Current' | 'Historical' | 'Amended';
+  effectiveDate?: string;  // e.g. ၁၈၆၁ / ၂၀၂၁ ပြင်ဆင်ချက်
+  hasAmendmentWarning?: boolean;
 }
 
 export interface LawBookInfo {
@@ -75,7 +79,7 @@ export interface LawBookInfo {
 export interface LegalDraftTemplate {
   id: string;
   title: string;
-  category: 'bail' | 'police_report' | 'notice' | 'contract' | 'power_of_attorney' | 'petition' | 'civil_contract';
+  category: 'bail' | 'police_report' | 'notice' | 'contract' | 'power_of_attorney' | 'petition' | 'civil_contract' | 'family';
   categoryLabel: string;
   description: string;
   templateText: string;
@@ -112,15 +116,68 @@ export interface LegalFAQ {
   legalReferences?: string[];
 }
 
+export interface HighlightItem {
+  id: string;
+  sectionId: string;
+  selectedText: string;
+  createdAt: string;
+}
+
 export interface SavedBookmark {
   id: string;
   sectionId: string;
   createdAt: string;
   userNote?: string;
+  highlights?: string[];
 }
 
-export interface AIResponse {
-  result: string;
-  error?: string;
+export interface ReadingHistoryItem {
+  id: string;
+  userId?: string;
+  lawId: string;
+  sectionId: string;
+  lastReadAt: string;
 }
+
+export interface SearchHistoryItem {
+  id: string;
+  userId?: string;
+  query: string;
+  createdAt: string;
+}
+
+export interface UserNoteItem {
+  id: string;
+  userId?: string;
+  sectionId: string;
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface QuizOption {
+  id: string;
+  text: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  category: 'penal_code' | 'crpc' | 'trafficking' | 'cyber' | 'civil_contract' | 'general';
+  categoryLabel: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  question: string;
+  options: QuizOption[];
+  correctOptionId: string;
+  explanation: string;
+  legalReference: string; // e.g. "ရာဇသတ်ကြီး ပုဒ်မ ၃၀၂"
+}
+
+export interface QuizCategoryInfo {
+  id: 'all' | 'penal_code' | 'crpc' | 'trafficking' | 'cyber' | 'civil_contract' | 'general';
+  title: string;
+  description: string;
+  questionCount: number;
+  iconName: string;
+}
+
 

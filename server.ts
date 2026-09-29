@@ -54,8 +54,9 @@ async function startServer() {
 ၃။ စာရင်းများကို ရိုးရိုး နံပါတ် (၁။ ၂။ ၃။) သို့မဟုတ် မျဉ်းတို (-) ဖြင့်သာ သုံးပါ။
 ၄။ စာသားကို မြန်မာစာသက်သက်ဖြင့် ရေးပါ။ အင်္ဂလိပ်စကားလုံး လိုအပ်မှသာ အသုံးပြုပြီး ကွင်းထဲမှာ ထည့်ပါ။
 ၅။ ဖြေကြားချက်ကို ဖတ်ရလွယ်ကူအောင် အပိုဒ်ခွဲပြီး ရေးပါ။ မလိုအပ်ဘဲ စာရှည်မရေးရ။
-၆။ ဥပဒေအမည်၊ ပုဒ်မနံပါတ်၊ နှစ်တို့ကို တိကျစွာ ဖော်ပြပါ။
-၇။ အဖြေ၏ အစတွင် အကျဉ်းချုပ် တစ်ပိုဒ် ရေးပြီးမှ အသေးစိတ် ဆက်ရှင်းပါ။
+၆။ ဥပဒေအမည်၊ ပုဒ်မနံပါတ်၊ နှစ်တို့ကို တိကျစွာ ဖော်ပြပါ။ ဥပဒေပုဒ်မ သို့မဟုတ် ပြစ်ဒဏ်များကို လုပ်ကြံဖန်တီး၍ မရေးရပါ။
+၇။ အကယ်၍ မေးမြန်းထားသော ဥပဒေပုဒ်မ သို့မဟုတ် အချက်အလက်သည် Database သို့မဟုတ် တရားဝင်ဥပဒေများတွင် ခိုင်မာစွာ မရှိပါက "လက်ရှိဥပဒေ Database တွင် အတည်ပြုနိုင်သော အချက်အလက် မတွေ့ရှိပါ" ဟု တိကျစွာ အကြောင်းပြန်ပါ။
+၈။ အဖြေ၏ အစတွင် အကျဉ်းချုပ် တစ်ပိုဒ် ရေးပြီးမှ အသေးစိတ် ဆက်ရှင်းပါ။
 
 အမြဲတမ်း သန့်ရှင်း၊ ပရော်ဖက်ရှင်နယ်နှင့် ဖတ်ရလွယ်ကူသော ပုံစံဖြင့်သာ ဖြေကြားပါ။`;
 
@@ -84,9 +85,9 @@ async function startServer() {
         fullPrompt = `[သတ်မှတ် ဥပဒေ အကြောင်းအရာ: ${lawContext}]\n\nမေးခွန်း/အကြောင်းအရာ: ${prompt}`;
       }
 
-      // Try multiple valid Gemini models with fallback in case of rate limits / quota limits
+      // Try multiple valid Gemini models with fallback in case of rate limits / high demand / quota limits
       const candidateModels = [
-        "gemini-3.6-flash",
+        "gemini-3.8-flash",
         "gemini-flash-latest",
         "gemini-3.1-flash-lite"
       ];
@@ -110,9 +111,11 @@ async function startServer() {
         } catch (err: any) {
           console.warn(`[Gemini Model Fallback] Model ${model} failed:`, err?.message || err);
           lastError = err;
-          // If rate limited or quota exceeded, wait brief ms then try next model
-          if (err?.status === 429 || String(err?.message || "").includes("429") || String(err?.message || "").includes("quota")) {
-            await new Promise((resolve) => setTimeout(resolve, 300));
+          // If rate limited, quota exceeded, or service temporarily unavailable (503/429), wait brief ms then try next model
+          const status = err?.status || err?.code;
+          const msg = String(err?.message || "");
+          if (status === 429 || status === 503 || msg.includes("429") || msg.includes("503") || msg.includes("quota") || msg.includes("UNAVAILABLE")) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
           }
         }
       }

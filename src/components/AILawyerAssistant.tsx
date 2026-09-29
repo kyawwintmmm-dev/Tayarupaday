@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Bot, Send, Sparkles, Copy, Check, RotateCcw, AlertCircle, BookOpen, ShieldCheck } from 'lucide-react';
+import { Bot, Send, Sparkles, Copy, Check, RotateCcw, AlertCircle, BookOpen, ShieldCheck, Database } from 'lucide-react';
+import { LAW_SECTIONS } from '../data/lawsData';
 
 interface AILawyerAssistantProps {
   initialPrompt?: string;
@@ -26,13 +27,40 @@ export const AILawyerAssistant: React.FC<AILawyerAssistantProps> = ({
     setLoading(true);
     setError(null);
 
+    // Phase 33 - Query app's local LAW_SECTIONS database for ground-truth matching
+    const qLower = queryPrompt.toLowerCase();
+    const matchedSections = LAW_SECTIONS.filter((s) => {
+      const secNoDigits = s.sectionNo.replace(/[^\d]/g, '');
+      const promptDigits = qLower.replace(/[^\d]/g, '');
+      const matchDigit = secNoDigits && promptDigits && promptDigits.length >= 2 && promptDigits.includes(secNoDigits);
+      
+      return (
+        matchDigit ||
+        qLower.includes(s.sectionNo.toLowerCase()) ||
+        qLower.includes(s.title.toLowerCase()) ||
+        qLower.includes(s.lawName.toLowerCase()) ||
+        (s.tags && s.tags.some((t) => t && qLower.includes(t.toLowerCase())))
+      );
+    }).slice(0, 5);
+
+    let enrichedContext = queryContext;
+    if (matchedSections.length > 0) {
+      const dbSnippet = matchedSections
+        .map(
+          (sec) =>
+            `• ${sec.lawName} - ${sec.sectionNo} (${sec.title}):\n  ${sec.content}\n  [ပြစ်ဒဏ်]: ${sec.punishment || 'သတ်မှတ်မထားပါ'}`
+        )
+        .join('\n\n');
+      enrichedContext = `${queryContext ? queryContext + '\n\n' : ''}[DATABASE MATCHES (အက်ပလီကေးရှင်း ဥပဒေဒေတာဘေ့စ်မှ တိုက်ရိုက် ရရှိသော အချက်အလက်များ)]:\n${dbSnippet}`;
+    }
+
     try {
       const res = await fetch('/api/legal-ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: queryPrompt,
-          lawContext: queryContext,
+          lawContext: enrichedContext,
           mode: 'qa',
         }),
       });
